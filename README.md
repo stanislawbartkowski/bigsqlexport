@@ -38,6 +38,6 @@ Customize resource.rc file
 * /export.sh db2importdll
   * Imports DLL exported by *db2* command
 * ./export.sh db2importtables
-  * Import tables exported by *db2tables*. Assumes that DLLs are already deployed. Pay attention to *CLIENT* variable
+  * Imports tables exported by *db2tables*. Assumes that DLLs are already deployed. Pay attention to *CLIENT* variable
   
 
