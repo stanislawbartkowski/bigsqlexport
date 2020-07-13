@@ -36,8 +36,8 @@ Customize resource.rc file
 * ./export.sh db2tables
   * Exports all DB2 managed tables in IXF format bypassing *SCHEMAS*. The result is stored in *OUTPUTDIR* directory. The previous contaner of the directory is removed.
 * /export.sh db2importdll
- * Imports DLL exported by *db2* command
+  * Imports DLL exported by *db2* command
 * ./export.sh db2importtables
- * Import tables exported by *db2tables*. Assumes that DLLs are already deployed. Pay attention to *CLIENT* variable
+  * Import tables exported by *db2tables*. Assumes that DLLs are already deployed. Pay attention to *CLIENT* variable
   
 
