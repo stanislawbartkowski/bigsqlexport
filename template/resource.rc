@@ -1,0 +1,13 @@
+#SCHEMAS="BIGSQL PERFDB"
+#USERID=bigsql
+#PASSWORD=bigsql
+#DBNAME=bigsql
+
+SCHEMAS="db2inst1 x xxx"
+USERID=db2inst1
+PASSWORD=db2inst1
+DBNAME=perfdb
+
+
+OUTPUTALLDIR=/tmp/alldll
+OUTPUTDIR=/tmp/export
