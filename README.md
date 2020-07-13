@@ -15,7 +15,7 @@ The project contains only single bash script file.
 > cd bigsqlexport<br>
 > cp template/resource.rc .<br>
 
-Customize rsource.rc file
+Customize resource.rc file
 | Variable | Description | Sample value
 |-----| -----|----|
 | SCHEMAS | space separated list of schema to store DLLs | "DB2INST1 BIGSQL XXX"
