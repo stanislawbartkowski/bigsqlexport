@@ -1,5 +1,9 @@
 source resource.rc
 
+OUTPUTDB2DLL=$OUTPUTALLDIR/db2dll.sql
+OUTPUTALLDLL=$OUTPUTALLDIR/alldll.sql
+OUTPUTALLGRANT=$OUTPUTALLDIR/allgrant.sql
+
 log() {
     echo "$1"
 }
@@ -22,8 +26,6 @@ preparedb2look() {
 exportalldll() {
     local -r TMP=`mktemp`
     mkdir -p $OUTPUTALLDIR
-    local -r OUTPUTALLDLL=$OUTPUTALLDIR/alldll.sql
-    local -r OUTPUTALLGRANT=$OUTPUTALLDIR/allgrant.sql
     rm -f $OUTPUTALLDLL
     rm -f $OUTPUTALLGRANT
     log "Export all DLLs for schemas $SCHEMAS to $OUTPUTALLDLL and $OUTPUTALLGRANT"
@@ -63,7 +65,6 @@ selectdb2tables() {
 
 exportdb2dll() {
     mkdir -p $OUTPUTALLDIR
-    local -r OUTPUTDB2DLL=$OUTPUTALLDIR/db2dll.sql
     rm -f $OUTPUTDB2DLL
     log "Export DB2 managed tables to $OUTPUTDB2DLL"
     local -r TMP=`mktemp`
@@ -98,11 +99,34 @@ exportdb2tables() {
     log "Export DB2 managed tables to $OUTPUTDIR completed."
 }
 
+importdb2dll() {
+    log "Import DB2 DLL from $OUTPUTDB2DLL"
+    connect
+    db2 -tvf $OUTPUTDB2DLL
+    [ $? -eq 0 ] || logfail "Import from $OUTPUTDB2DLL  failed"
+    terminate
+}
+
+importdb2tables() {
+    log "Import DB2 tables from $OUTPUTDIR"
+    connect
+    for file in $OUTPUTDIR/*.ixf ; do
+        TABLE=`basename $file .ixf`
+        log "Import $TABLE from $file"
+        db2 load $CLIENT from $file of ixf replace into $TABLE
+        [ $? -eq 0 ] || logfail "Load $TABLE failed"
+    done
+    terminate
+    log "Import DB2 tables from $OUTPUTDIR completed"
+}
+
 printhelp() {
     echo "export.sh /action/"
     echo   "all : Export all dlls for schemas $SCHEMA"
     echo   "db2 : Export dlls for tables managed by DB2"
     echo   "db2tables: Export DB2 tables managed to DB2"
+    echo   "db2importdll: Import DLL exported by db2"
+    echo   "db2importtables: Import tables assuming DLL already imported"
 }
 
 preparedb2look
@@ -111,5 +135,7 @@ case $1 in
     all) exportalldll;;
     db2) exportdb2dll;;
     db2tables) exportdb2tables;;
+    db2importdll) importdb2dll;;
+    db2importtables) importdb2tables;;
     *) printhelp;;
 esac
