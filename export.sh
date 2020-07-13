@@ -32,7 +32,11 @@ exportalldll() {
 }
 
 connect() {
-    db2 connect to $DBNAME user $USERID using $PASSWORD
+    if [ -z $USERID ]; then 
+        db2 connect to $DBNAME
+    else
+        db2 connect to $DBNAME user $USERID using $PASSWORD
+    fi
     [ $? -eq 0 ] || logfail "Cannot connect"
 }
 
@@ -42,7 +46,6 @@ terminate() {
 
 selectdb2tables() {
     local -r TMP=$1
-    rm -f $OUTPUTDB2DLL
     connect
     db2 -x -z $TMP "select rtrim(tabschema) || '.' || tabname from syscat.tables where tbspaceid > 1 and tbspace <> 'SYSTOOLSPACE'" 
     [ $? -eq 0 ] || logfail "Query failed"
@@ -50,8 +53,10 @@ selectdb2tables() {
 }
 
 exportdb2dll() {
-    log "Export DB2 managed tables to $OUTPUTDB2DLL"
+    mkdir -p $OUTPUTALLDIR
+    local -r OUTPUTDB2DLL=$OUTPUTALLDIR/db2dll.sql
     rm -f $OUTPUTDB2DLL
+    log "Export DB2 managed tables to $OUTPUTDB2DLL"
     local -r TMP=`mktemp`
     local -r TMP1=`mktemp`
     selectdb2tables $TMP
