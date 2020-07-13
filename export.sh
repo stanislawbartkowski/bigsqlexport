@@ -10,6 +10,15 @@ logfail() {
     exit 1
 }
 
+preparedb2look() {
+    if [ -z $USERID ]; then 
+        DB2LOOK="db2look -d $DBNAME"
+    else
+        DB2LOOK="db2look -d $DBNAME -i $USERID -w $PASSWORD"
+    fi
+
+}
+
 exportalldll() {
     local -r TMP=`mktemp`
     mkdir -p $OUTPUTALLDIR
@@ -20,10 +29,10 @@ exportalldll() {
     log "Export all DLLs for schemas $SCHEMAS to $OUTPUTALLDLL and $OUTPUTALLGRANT"
     for s in $SCHEMAS ; do 
         log "Export DLL for schema $s"
-        db2look -d $DBNAME -z $s -x -e  -i $USERID -w $PASSWORD -o $TMP
+        $DB2LOOK -z $s -x -e  -o $TMP
         [ $? -eq 0 ] || logfail "db2look for schema failed"
         cat $TMP >>$OUTPUTALLDLL
-        db2look -d $DBNAME -z $s -xd -i $USERID -w $PASSWORD -o $TMP
+        $DB2LOOK -z $s -xd -o $TMP
         [ $? -eq 0 ] || logfail "db2look for grant failed"
         cat $TMP >>$OUTPUTALLGRANT
     done
@@ -62,7 +71,7 @@ exportdb2dll() {
     selectdb2tables $TMP
     while read -r line; do 
         log "Export DLL for $line"
-        db2look -d $DBNAME -t $line -x -e  -i $USERID -w $PASSWORD -o $TMP1
+        $DB2LOOK -t $line -x -e -o $TMP1
         [ $? -eq 0 ] || logfail "db2look failed"
         cat $TMP1 >>$OUTPUTDB2DLL
         [ $? -eq 0 ] || logfail "Cannot concatenate the result: cat $TMP1 >>$OUTPUTDB2DLL"
@@ -95,6 +104,8 @@ printhelp() {
     echo   "db2 : Export dlls for tables managed by DB2"
     echo   "db2tables: Export DB2 tables managed to DB2"
 }
+
+preparedb2look
 
 case $1 in
     all) exportalldll;;
