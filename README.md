@@ -24,6 +24,7 @@ Customize rsource.rc file
 | PASSWORD | Only if USERID is set | secret
 | OUTPUTALLDIR | Directory where DLL output is stored | /tmp/alldll
 | OUTPUTDIR | Directory where exported file is stored | /tmp/export
+| CLIENT | Only matters for db2importtables, db2 load $CLIENT | Either client or empty
 
 # Functionality implemented
 * ./export.sh
@@ -34,5 +35,9 @@ Customize rsource.rc file
   * Exports all DLL for DB2 managed tables bypassing *SCHEMAS*. The result is stored in *OUTPUTALLDIR*/db2dll.sql
 * ./export.sh db2tables
   * Exports all DB2 managed tables in IXF format bypassing *SCHEMAS*. The result is stored in *OUTPUTDIR* directory. The previous contaner of the directory is removed.
+* /export.sh db2importdll
+ * Imports DLL exported by *db2* command
+* ./export.sh db2importtables
+ * Import tables exported by *db2tables*. Assumes that DLLs are already deployed. Pay attention to *CLIENT* variable
   
 
