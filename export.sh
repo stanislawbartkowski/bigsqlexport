@@ -112,8 +112,11 @@ importdb2tables() {
     connect
     for file in $OUTPUTDIR/*.ixf ; do
         TABLE=`basename $file .ixf`
+        MESS="${file%.*}".mess
         log "Import $TABLE from $file"
-        db2 load $CLIENT from $file of ixf replace into $TABLE
+#        db2 load $CLIENT from $file of ixf replace into $TABLE
+        echo "db2 import from $file of ixf messages $MESS replace into $TABLE"
+        db2 import from $file of ixf messages $MESS replace into $TABLE
         [ $? -eq 0 ] || logfail "Load $TABLE failed"
     done
     terminate
